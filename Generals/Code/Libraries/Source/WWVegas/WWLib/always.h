@@ -41,6 +41,7 @@
 #define ALWAYS_H
 
 #include <assert.h>
+#include <new>
 
 // Disable warning about exception handling not being enabled. It's used as part of STL - in a part of STL we don't use.
 #pragma warning(disable : 4530)
@@ -71,6 +72,8 @@
 #endif	//_MSC_VER
 #endif	//_DEBUG
 
+#if !defined(DISABLE_GAMEMEMORY) // (gth) killing the Generals Memory Manager!
+
 #ifndef _OPERATOR_NEW_DEFINED_
 
 	#define _OPERATOR_NEW_DEFINED_
@@ -88,11 +91,13 @@
 	extern void* __cdecl operator new[]		(size_t nSize, const char *, int);
 	extern void __cdecl operator delete[]	(void *, const char *, int);
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	// additional overloads for 'placement new'
 	//inline void* __cdecl operator new							(size_t s, void *p) { return p; }
 	//inline void __cdecl operator delete						(void *, void *p)		{ }
 	inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
 	inline void __cdecl operator delete[]					(void *, void *p)		{ }
+#endif
 
 #endif
 
@@ -153,16 +158,19 @@ public:
 };
 // ----------------------------------------------------------------------------
 
+#else
 
-// Jani: Intel's C++ compiler issues too many warnings in WW libraries when using warning level 4
-#if defined (__ICL)    // Detect Intel compiler
-#pragma warning (3)
-#pragma warning ( disable: 981 ) // parameters defined in unspecified order
-#pragma warning ( disable: 279 ) // controlling expressaion is constant
-#pragma warning ( disable: 271 ) // trailing comma is nonstandard
-#pragma warning ( disable: 171 ) // invalid type conversion
-#pragma warning ( disable: 1 ) // last line of file ends without a newline
-#endif
+	#define MSGW3DNEW(MSG)					new
+	#define MSGW3DNEWARRAY(MSG)			new
+	#define W3DNEW									new
+	#define W3DNEWARRAY							new
+
+	#define W3DMPO_GLUE(ARGCLASS)
+
+	class W3DMPO { };
+
+#endif // (gth) removing the generals memory stuff from W3D
+
 
 // Jani: MSVC doesn't necessarily inline code with inline keyword. Using __forceinline results better inlining
 // and also prints out a warning if inlining wasn't possible. __forceinline is MSVC specific.
@@ -230,7 +238,7 @@ template <class T> T max(T a,T b)
 #endif
 
 #if defined(__WATCOMC__)
-#include	"watcom.h"
+#include	"WATCOM.H"
 #endif
 
 

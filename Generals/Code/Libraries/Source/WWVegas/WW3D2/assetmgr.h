@@ -44,10 +44,10 @@
 #define ASSETMGR_H
 
 #include "always.h"
-#include "vector.h"
+#include "Vector.H"
 #include "htreemgr.h"
 #include "hanimmgr.h"
-#include "slist.h"
+#include "SLIST.H"
 #include "texture.h"
 #include "hashtemplate.h"
 #include "simplevec.h"
@@ -74,6 +74,7 @@ class StreamingTextureClass;
 struct StreamingTextureConfig;
 class TextureClass;
 class MetalMapManagerClass;
+
 
 /*
 ** AssetIterator
@@ -202,7 +203,7 @@ public:
 	**	WW3DAssetManager::Get_Instance();
 	*/
 	static WW3DAssetManager *		Get_Instance(void) { return TheInstance; }
-	static void							Delete_This(void) { if (TheInstance) delete TheInstance; }
+	static void							Delete_This(void) { if (TheInstance) delete TheInstance; TheInstance=NULL; }
 
 	/*
 	** Load data from any type of w3d file
@@ -261,11 +262,13 @@ public:
 
 	static void Log_Texture_Statistics();
 
-	virtual TextureClass *			Get_Texture(
+	virtual TextureClass *			Get_Texture
+	(
 		const char * filename, 
-		TextureClass::MipCountType mip_level_count=TextureClass::MIP_LEVELS_ALL,
+		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
-		bool allow_compression=true);
+		bool allow_compression=true
+	);
 	TextureClass*						Get_Bumpmap_Based_On_Texture(TextureClass* texture);
 
 	virtual void						Release_All_Textures(void);
@@ -321,6 +324,7 @@ public:
 
 	// Log texture statistics
 	void Log_All_Textures();
+
 protected:
 
 	/*

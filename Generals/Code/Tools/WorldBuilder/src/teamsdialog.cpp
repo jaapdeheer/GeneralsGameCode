@@ -19,8 +19,8 @@
 // teamsdialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "teamsdialog.h"
 #include "CFixTeamOwnerDialog.h"
 
@@ -31,8 +31,8 @@
 #include "TeamIdentity.h"
 #include "TeamReinforcement.h"
 #include "WorldBuilderDoc.h"
-#include "cundoable.h"
-#include "WBView3d.h"
+#include "CUndoable.h"
+#include "wbview3d.h"
 
 static Int thePrevCurTeam = 0;
 
@@ -329,8 +329,9 @@ void CTeamsDialog::UpdateTeamsList()
 
 	Int numTeams = m_sides.getNumTeams();
 	Bool selected = false;
+	Int inserted = 0;
 
-	for (Int i=0, inserted = 0; i<numTeams; i++)
+	for (Int i=0; i<numTeams; i++)
 	{
 		TeamsInfo *ti = m_sides.getTeamInfo(i);
 		if (ti->getDict()->getAsciiString(TheKey_teamOwner) == playerNameForUI(m_sides, which).str())

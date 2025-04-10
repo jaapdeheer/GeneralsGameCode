@@ -39,7 +39,7 @@
 //#include "..\win.h"
 #include <stdio.h>
 //#include "debugprint.h"
-#include "wnd_file.h"
+#include "Wnd_File.h"
 
 
 /******************************************************************************
@@ -60,7 +60,7 @@
 *
 ******************************************************************************/
 
-bool ViewHTML(const char* url, bool wait, CallbackHook& callback)
+bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	{
 //	DebugPrint("ViewHTML()\n");
 	Msg( __LINE__, TEXT(__FILE__), TEXT("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" ));

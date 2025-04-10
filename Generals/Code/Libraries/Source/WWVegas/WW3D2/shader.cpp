@@ -43,7 +43,7 @@
 #include "shader.h"
 #include "w3d_file.h"
 #include "wwdebug.h"
-#include "Dx8Wrapper.h"
+#include "dx8wrapper.h"
 #include "dx8caps.h"
 
 
@@ -401,7 +401,7 @@ void ShaderClass::Apply()
 {
 	unsigned long diff;
 
-	unsigned int TextureOpCaps=DX8Caps::Get_Default_Caps().TextureOpCaps;
+	unsigned int TextureOpCaps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps().TextureOpCaps;
 
 	if (ShaderDirty)
 	{

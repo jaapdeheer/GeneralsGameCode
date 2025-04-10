@@ -46,7 +46,7 @@
 #endif
 
 #ifndef BITTYPE_H
-#include "bittype.h"
+#include "BITTYPE.H"
 #endif
 
 #ifndef WWFILE_H
@@ -377,4 +377,4 @@ private:
 
 
 
-#endif CHUNKIO_H
+#endif // CHUNKIO_H

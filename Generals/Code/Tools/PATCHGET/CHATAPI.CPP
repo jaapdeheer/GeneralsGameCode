@@ -21,24 +21,29 @@
 //
 
 #include <list>
-#include "GameSpy/ghttp/ghttp.h"
-#include "downloadManager.h"
+#include "gamespy/ghttp/ghttp.h"
+#include "DownloadManager.h"
 
-#include "chatapi.h"
+#include "CHATAPI.H"
 
 //#include "api/wolapi_i.c"  // This should only be in one .cpp file
 #include <objbase.h>
 #include <windows.h>
 #include <initguid.h>
 #include <olectl.h>
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #include <mapicode.h>
-#include "resource.h"
-#include "winblows.h"
+#endif
+#include "RESOURCE.H"
+#include "WINBLOWS.H"
 #include <crtdbg.h>
 #include "process.h"
-#include "WWDownload/registry.h"
+#include "WWDownload/Registry.h"
 #include "WWDownload/urlBuilder.h"
 #include "debug.h"
+
+namespace patchget
+{
 
 enum EVENT_TYPES
 {
@@ -386,7 +391,7 @@ static void queuePatch(bool mandatory, std::string downloadURL)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	--checksLeft;
 	DEBUG_ASSERTCRASH(checksLeft>=0, ("Too many callbacks"));
@@ -873,7 +878,7 @@ char const * Fetch_String(int id)
 
 
 
-void LogMsg(char *msg)
+void LogMsg(const char *msg)
 {
 #ifdef _DEBUG
   FILE *out=fopen("register.log","a");
@@ -1792,3 +1797,5 @@ STDMETHODIMP CChatEventSink::OnSquadInfo(HRESULT, unsigned long, Squad *)
 }
 
 */
+
+} // namespace patchget

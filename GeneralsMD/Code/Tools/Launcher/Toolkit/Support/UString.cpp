@@ -34,7 +34,7 @@
 *
 ******************************************************************************/
 
-#include "VisualC.h"
+#include "Visualc.h"
 #include "UString.h"
 #include "StringConvert.h"
 #include <string.h>
@@ -776,7 +776,7 @@ Int UString::Find(Char c) const
 
 Int UString::Find(WChar c) const
 	{
-	WChar* ptr = wcschr(Get(), c);
+	const WChar* ptr = wcschr(Get(), c);
 
 	// Not found?
 	if (ptr == NULL)

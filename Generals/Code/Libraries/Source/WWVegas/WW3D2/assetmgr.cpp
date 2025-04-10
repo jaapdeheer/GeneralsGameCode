@@ -98,7 +98,6 @@
 #include "distlod.h"
 #include "hlod.h"
 #include "agg_def.h"
-#include "texfcach.h"
 #include "wwstring.h"
 #include "wwmemlog.h"
 #include "dazzle.h"
@@ -106,11 +105,10 @@
 #include "dx8renderer.h"
 #include "metalmap.h"
 #include "w3dexclusionlist.h"
-#include <ini.h>
+#include <INI.H>
 #include <windows.h>
 #include <stdio.h>
-#include <D3dx8core.h>
-
+#include <d3dx8core.h>
 #include "texture.h"
 #include "wwprofile.h"
 
@@ -302,7 +300,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		if (tex->Is_Initialized()!=inited) continue;
 
 		D3DSURFACE_DESC desc;
-		IDirect3DTexture8* d3d_texture=tex->Peek_DX8_Texture();
+		IDirect3DTexture8* d3d_texture=tex->Peek_D3D_Texture();
 		if (!d3d_texture) continue;
 		DX8_ErrorCode(d3d_texture->GetLevelDesc(0,&desc));
 
@@ -524,7 +522,8 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 	exclude_array.Set_Growth_Step(DEFAULT_EXCLUDE_ARRAY_SIZE);
 
 	// iterate the array of prototypes saving each one that should be excluded from deletion
-	for (int i=0; i<Prototypes.Count(); i++) {
+	int i=0;
+	for (; i<Prototypes.Count(); i++) {
 
 		PrototypeClass * proto = Prototypes[i];
 		if (proto != NULL) {		
@@ -790,7 +789,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 
 	if (WW3D_Load_On_Demand && proto == NULL) {	// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) {
 			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
 			::lstrcat (filename, ".w3d");
@@ -967,7 +966,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 		if ( !HAnimManager.Is_Missing( name ) ) {	// if this is NOT a known missing anim
 
 			char filename[ MAX_PATH ];
-			char *animname = strchr( name, '.');
+			const char *animname = strchr( name, '.');
 			if (animname != NULL) {
 				sprintf( filename, "%s.w3d", animname+1);
 			} else {
@@ -1082,18 +1081,21 @@ TextureClass* WW3DAssetManager::Get_Bumpmap_Based_On_Texture(TextureClass* textu
  * HISTORY:                                                                                    *
  *   1/31/2001  NH : Created.                                                                  *
  *=============================================================================================*/
-TextureClass * WW3DAssetManager::Get_Texture(
+TextureClass * WW3DAssetManager::Get_Texture
+(
 	const char * filename, 
-	TextureClass::MipCountType mip_level_count,
+	MipCountType mip_level_count,
 	WW3DFormat texture_format,
-	bool allow_compression)
+	bool allow_compression
+)
 {
 	WWPROFILE( "WW3DAssetManager::Get_Texture 1" );
 
 	/*
 	** Bail if the user isn't really asking for anything
 	*/
-	if ((filename == NULL) || (strlen(filename) == 0)) {
+	if ((filename == NULL) || (strlen(filename) == 0)) 
+	{
 		return NULL;
 	}
 
@@ -1105,15 +1107,17 @@ TextureClass * WW3DAssetManager::Get_Texture(
 	*/
 
 	TextureClass* tex = TextureHash.Get(lower_case_name);
-	if (tex && texture_format!=WW3D_FORMAT_UNKNOWN) {
+	if (tex && texture_format!=WW3D_FORMAT_UNKNOWN) 
+	{
 		WWASSERT_PRINT(tex->Get_Texture_Format()==texture_format,("Texture %s has already been loaded witt different format",filename));
 	}
 
 	/*
 	** Didn't have it so we have to create a new texture
 	*/
-	if (!tex) {
-		tex = NEW_REF(TextureClass,(lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
+	if (!tex) 
+	{
+		tex = NEW_REF (TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
 		TextureHash.Insert(tex->Get_Texture_Name(),tex);
 	}
 

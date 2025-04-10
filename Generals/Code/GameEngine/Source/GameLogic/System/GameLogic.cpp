@@ -118,7 +118,7 @@ FILE *g_UT_timingLog=NULL;
 FILE *g_UT_commaLog=NULL;
 // Note - this is only for gathering timing data!  DO NOT DO THIS IN REGULAR CODE!!!  JBA
 #define BRUTAL_TIMING_HACK
-#include "../../gameenginedevice/include/W3DDevice/GameClient/Module/W3DModelDraw.h"
+#include "../../GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DModelDraw.h"
 #endif
 
 
@@ -423,7 +423,11 @@ void GameLogic::reset( void )
 
 	// set the hash to be rather large. We need to optimize this value later.
 	m_objHash.clear();
+#if USING_STLPORT
 	m_objHash.resize(OBJ_HASH_SIZE);
+#else
+	m_objHash.reserve(OBJ_HASH_SIZE);
+#endif
 	m_gamePaused = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
@@ -600,7 +604,6 @@ LoadScreen *GameLogic::getLoadScreen( Bool saveGame )
 	case GAME_SHELL:
 		return NEW ShellGameLoadScreen;
 		break;
-#if !defined(_PLAYTEST)
 	case GAME_SINGLE_PLAYER:
 		if(TheCampaignManager->getCurrentMission() && saveGame == FALSE )
 			return NEW SinglePlayerLoadScreen;
@@ -616,7 +619,6 @@ LoadScreen *GameLogic::getLoadScreen( Bool saveGame )
 	case GAME_REPLAY:
 		return NEW ShellGameLoadScreen;
 		break;
-#endif
 	case GAME_INTERNET:
 		return NEW GameSpyLoadScreen;
 		break;
@@ -994,7 +996,6 @@ void GameLogic::startNewGame( Bool saveGame )
 
 		if( m_startNewGame == FALSE )
 		{
-#if !defined(_PLAYTEST)
 			/// @todo: Here is where we would look at the game mode & play an intro movie or something.
 			// Failing that, we just set the flag so the actual game can start from a uniform
 			// entry point (startNewGame() called from update()).
@@ -1015,7 +1016,6 @@ void GameLogic::startNewGame( Bool saveGame )
 				}
 
 			}
-#endif
 
 			m_startNewGame = TRUE;
 			return;
@@ -1056,12 +1056,10 @@ void GameLogic::startNewGame( Bool saveGame )
 		{
 			TheGameInfo = game = TheRecorder->getGameInfo();
 		}
-#if !defined(_PLAYTEST)
-    else if(m_gameMode == GAME_SKIRMISH )
-    {
-      TheGameInfo = game = TheSkirmishGameInfo;
-    }
-#endif
+		else if(m_gameMode == GAME_SKIRMISH)
+		{
+		  TheGameInfo = game = TheSkirmishGameInfo;
+		}
 	}
 
 	checkForDuplicateColors( game );
@@ -2280,7 +2278,7 @@ void GameLogic::processCommandList( CommandList *list )
 				DEBUG_LOG(("CRC from player %d (%ls) = %X\n", crcIt->first,
 					player?player->getPlayerDisplayName().str():L"<NONE>", crcIt->second));
 			}
-#endif DEBUG_LOGGING
+#endif // DEBUG_LOGGING
 			TheNetwork->setSawCRCMismatch();
 		}
 	}
@@ -3402,7 +3400,7 @@ void GameLogic::registerObject( Object *obj )
 	* GameLogic/Client for those purposes, or we could put the allocation pools
 	* in the GameLogic and GameClient themselves */
 // ------------------------------------------------------------------------------------------------
-Object *GameLogic::friend_createObject( const ThingTemplate *thing, ObjectStatusBits statusBits, Team *team )
+Object *GameLogic::friend_createObject( const ThingTemplate *thing, const ObjectStatusMaskType &statusBits, Team *team )
 {
 	Object *obj;
 
@@ -3432,7 +3430,7 @@ void GameLogic::destroyObject( Object *obj )
 	}
 
 	// mark object as destroyed
-	obj->setStatus( OBJECT_STATUS_DESTROYED );
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DESTROYED ) );
 
 	// We desperately need to stop here, or else the destructor of the statemachine will try to do
 	// stopping logic, which uses virtual functions and deleted modules, which will crash us.

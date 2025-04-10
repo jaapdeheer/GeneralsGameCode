@@ -20,11 +20,11 @@
 //	XLStuff.cpp
 //
 //
-#include "stdAfx.h"
+#include "StdAfx.h"
 #include "Babylon.h"
 #include "resource.h"				 
 #include <stdio.h>
-#include "xlstuff.h"
+#include "XLStuff.h"
 #include <assert.h>
 #include <comdef.h>
 
@@ -83,7 +83,7 @@ error:
 }
 
 
-int PutCell ( int row, int column, OLECHAR *string, int val )
+int PutCell ( int row, int column, const OLECHAR *string, int val )
 {
 	VARIANT cell;
 	VARIANT newValue;

@@ -29,7 +29,7 @@
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
 #include "Common/LocalFileSystem.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 
@@ -1153,6 +1153,42 @@ Int parseMod(char *args[], Int num)
 	return 1;
 }
 
+#if defined(_DEBUG) || defined(_INTERNAL)
+Int parseSetDebugLevel(char *args[], int num)
+{
+	if (num > 1)
+	{
+		AsciiString val = args[1];
+		for (Int i=0; i<DEBUG_LEVEL_MAX; ++i)
+		{
+			if (val == TheDebugLevels[i])
+			{
+				DebugLevelMask |= 1<<i;
+				break;
+			}
+		}
+	}
+	return 2;
+}
+
+Int parseClearDebugLevel(char *args[], int num)
+{
+	if (num > 1)
+	{
+		AsciiString val = args[1];
+		for (Int i=0; i<DEBUG_LEVEL_MAX; ++i)
+		{
+			if (val == TheDebugLevels[i])
+			{
+				DebugLevelMask &= ~(1<<i);
+				break;
+			}
+		}
+	}
+	return 2;
+}
+#endif
+
 static CommandLineParam params[] =
 {
 	{ "-noshellmap", parseNoShellMap },
@@ -1275,6 +1311,8 @@ static CommandLineParam params[] =
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
 	{ "-noshroud", parseNoShroud },
+	{ "-setDebugLevel", parseSetDebugLevel },
+	{ "-clearDebugLevel", parseClearDebugLevel },
 	{ "-forceBenchmark", parseForceBenchmark },
 	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },

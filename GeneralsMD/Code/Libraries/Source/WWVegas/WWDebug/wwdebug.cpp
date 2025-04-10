@@ -51,7 +51,7 @@
 #include <assert.h>
 #include <string.h>
 #include <signal.h>
-#include "except.h"
+#include "Except.h"
 
 
 static PrintFunc			_CurMessageHandler = NULL;
@@ -313,7 +313,7 @@ void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
       }
 
 		if (code == IDRETRY) {
-			_asm int 3;
+			WWDEBUG_BREAK
       	return;
 		}
    }

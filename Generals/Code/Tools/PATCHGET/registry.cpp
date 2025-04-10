@@ -27,6 +27,9 @@
 
 #include "Registry.h"
 
+namespace patchget
+{
+
 bool  getStringFromRegistry(HKEY root, std::string path, std::string key, std::string& val)
 {
 	HKEY handle;
@@ -79,8 +82,9 @@ bool setStringInRegistry( HKEY root, std::string path, std::string key, std::str
 	unsigned long type;
 	unsigned long returnValue;
 	int size;
+	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.c_str(), 0, "REG_NONE", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL )) == ERROR_SUCCESS)
+	if ((returnValue = RegCreateKeyEx( root, path.c_str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL )) == ERROR_SUCCESS)
 	{
 		type = REG_SZ;
 		size = val.length()+1;
@@ -97,8 +101,9 @@ bool setUnsignedIntInRegistry( HKEY root, std::string path, std::string key, uns
 	unsigned long type;
 	unsigned long returnValue;
 	int size;
+	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.c_str(), 0, "REG_NONE", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL )) == ERROR_SUCCESS)
+	if ((returnValue = RegCreateKeyEx( root, path.c_str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL )) == ERROR_SUCCESS)
 	{
 		type = REG_DWORD;
 		size = 4;
@@ -134,3 +139,5 @@ bool GetUnsignedIntFromRegistry(std::string path, std::string key, unsigned int&
 
 	return getUnsignedIntFromRegistry(HKEY_CURRENT_USER, fullPath.c_str(), key.c_str(), val);
 }
+
+} // namespace patchget

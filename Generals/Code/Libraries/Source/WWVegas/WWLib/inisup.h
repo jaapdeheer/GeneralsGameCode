@@ -44,9 +44,9 @@
 **	to help reduce header dependancies. -ehc
 */
 
-#include	"listnode.h"
-#include	"index.h"
-#include "crc.h"
+#include	"LISTNODE.H"
+#include	"INDEX.H"
+#include "CRC.H"
 
 
 /*
@@ -82,7 +82,7 @@ struct INISection : public Node<INISection *> {
 
 	private:
 		INISection(INISection const & rvalue);
-		INISection operator = (INISection const & rvalue);
+		INISection& operator = (INISection const & rvalue);
 };
 
 

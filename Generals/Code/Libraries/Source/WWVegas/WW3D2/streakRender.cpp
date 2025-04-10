@@ -25,14 +25,14 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "streakrender.h"
+#include "streakRender.h"
 #include "ww3d.h"
 #include "rinfo.h"
 #include "dx8wrapper.h"
 #include "sortingrenderer.h"
 #include "vp.h"
-#include "vector3i.h"
-#include "random.h"
+#include "Vector3i.h"
+#include "RANDOM.H"
 #include "v3_rnd.h"
 
 
@@ -312,10 +312,10 @@ void StreakRendererClass::RenderStreak
 	unsigned int *personalities			/////////////// DIFFERENT FROM RENDER( )
 )
 {
-	Matrix4 view;
+	Matrix4x4 view;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 
-	Matrix4 identity(true);
+	Matrix4x4 identity(true);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);	
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);	
 

@@ -181,6 +181,9 @@ public:
 
 	void				First(GenericMultiListClass *list)		{ List = list; CurNode = List->Head.Next; }
 	void				First(void)										{ CurNode = List->Head.Next; }
+	void				Last(GenericMultiListClass *list)		{ List = list; CurNode = List->Head.Prev; }
+	void				Last(void)										{ CurNode = List->Head.Prev; }
+
 	void				Next(void)										{ CurNode = CurNode->Next; }
 	void				Prev(void)										{ CurNode = CurNode->Prev; }
 	bool				Is_Done(void)									{ return (CurNode == &(List->Head)); }
@@ -291,6 +294,11 @@ private:
 template <class ObjectType>
 class MultiListIterator : public GenericMultiListIterator
 {
+protected:
+	using GenericMultiListIterator::CurNode;
+public:
+	using GenericMultiListIterator::First;
+
 public:
 
 	MultiListIterator(MultiListClass<ObjectType> *list) : GenericMultiListIterator(list)	{}
@@ -484,6 +492,12 @@ public:
 template <class ObjectType>
 class PriorityMultiListIterator : public MultiListIterator<ObjectType>
 {
+protected:
+	using MultiListIterator<ObjectType>::CurNode;
+public:
+	using MultiListIterator<ObjectType>::First;
+	using MultiListIterator<ObjectType>::Remove_Current_Object;
+
 public:
 	PriorityMultiListIterator(MultiListClass<ObjectType> *list)
 		:	OriginalHead (NULL),

@@ -44,17 +44,15 @@
 #ifdef INCLUDE_GRANNY_IN_BUILD
 
 #include "W3DDevice/GameClient/W3DGranny.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "texture.h"
 #include "colmath.h"
 #include "coltest.h"
 #include "rinfo.h"
 #include "camera.h"
 #include "assetmgr.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/Scene.h"
-
-#pragma comment( lib, "granny2" )
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/scene.h"
 
 static granny_pnt332_vertex g_blendingBuffer[4096];	///<temporary workspace for granny (all models < 4096 verts).
 

@@ -41,7 +41,7 @@
 
 #include "wwmemlog.h"
 #include "wwdebug.h"
-#include "vector.h"
+#include "Vector.H"
 #include <windows.h>
 
 #if (STEVES_NEW_CATCHER || PARAM_EDITING_ON)
@@ -57,7 +57,7 @@ static unsigned FreeCount;
 ** Name for each memory category.  I'm padding the array with some "undefined" strings in case
 ** someone forgets to set the name when adding a new category.
 */
-static char * _MemoryCategoryNames[] =
+static const char * _MemoryCategoryNames[] =
 {
 	"UNKNOWN",
 	"Geometry",

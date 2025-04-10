@@ -1118,7 +1118,7 @@ void PathfindCellInfo::releaseCellInfos(void)
 		s_firstFree = s_firstFree->m_pathParent;
 	}
 	DEBUG_ASSERTCRASH(count==CELL_INFOS_TO_ALLOCATE, ("Error - Allocated cellinfos."));
-	delete s_infoArray;
+	delete[] s_infoArray;
 	s_infoArray = NULL;
 	s_firstFree = NULL;
 }
@@ -1184,7 +1184,7 @@ PathfindCell::~PathfindCell( void )
 { 	
 	if (m_info) PathfindCellInfo::releaseACellInfo(m_info);
 	m_info = NULL;
-	static warn = true;
+	static Bool warn = true;
 	if (warn) {
 		warn = false;
 		DEBUG_LOG( ("PathfindCell::~PathfindCell m_info Allocated."));
@@ -1826,7 +1826,7 @@ inline Bool groundCliff(const PathfindCell &targetCell, const PathfindCell &sour
 	return false;
 }
 
-static void __fastcall resolveBlockZones(Int srcZone, Int targetZone, UnsignedShort *zoneEquivalency, Int sizeOfZE)
+static void __fastcall resolveBlockZones(Int srcZone, Int targetZone, zoneStorageType *zoneEquivalency, Int sizeOfZE)
 {
 	Int i;
 	// We have two zones being combined now. Keep the lower zone.
@@ -1846,7 +1846,7 @@ static void __fastcall resolveBlockZones(Int srcZone, Int targetZone, UnsignedSh
 	}
 }
 
-static void __fastcall resolveZones(Int srcZone, Int targetZone, UnsignedShort *zoneEquivalency, Int sizeOfZE)
+static void __fastcall resolveZones(Int srcZone, Int targetZone, zoneStorageType *zoneEquivalency, Int sizeOfZE)
 {
 	Int i;
 	// We have two zones being combined now. Keep the lower zone.
@@ -1855,7 +1855,7 @@ static void __fastcall resolveZones(Int srcZone, Int targetZone, UnsignedShort *
 	srcZone = zoneEquivalency[srcZone];
 	targetZone = zoneEquivalency[targetZone];
 	DEBUG_ASSERTCRASH(srcZone<sizeOfZE && targetZone<sizeOfZE,  ("Bad resolve zones	."));
-	UnsignedShort finalZone;
+	zoneStorageType finalZone;
 	if (targetZone<srcZone) {
 		finalZone = zoneEquivalency[targetZone];
 	} else {
@@ -1863,14 +1863,14 @@ static void __fastcall resolveZones(Int srcZone, Int targetZone, UnsignedShort *
 	}
 	DEBUG_ASSERTCRASH(finalZone<sizeOfZE ,  ("Bad resolve zones	."));
 	for (i=0; i<sizeOfZE; i++) { 
-		UnsignedShort ze = zoneEquivalency[i];
+		zoneStorageType ze = zoneEquivalency[i];
 		if (ze == targetZone || ze == srcZone) {
 			zoneEquivalency[i] = finalZone;
 		}
 	}
 }
 
-static void flattenZones(UnsignedShort *zoneArray, UnsignedShort *zoneHierarchical, Int sizeOfZones)
+static void flattenZones(zoneStorageType *zoneArray, zoneStorageType *zoneHierarchical, Int sizeOfZones)
 {
 	Int i;
 	for (i=0; i<sizeOfZones; i++) {
@@ -1892,7 +1892,7 @@ static void flattenZones(UnsignedShort *zoneArray, UnsignedShort *zoneHierarchic
 #endif
 }
 
-inline void applyZone(PathfindCell &targetCell, const PathfindCell &sourceCell, UnsignedShort *zoneEquivalency, Int sizeOfZE)
+inline void applyZone(PathfindCell &targetCell, const PathfindCell &sourceCell, zoneStorageType *zoneEquivalency, Int sizeOfZE)
 {
 	DEBUG_ASSERTCRASH(sourceCell.getZone()!=0, ("Unset source zone."));
 	Int srcZone = zoneEquivalency[sourceCell.getZone()];
@@ -1911,7 +1911,7 @@ inline void applyZone(PathfindCell &targetCell, const PathfindCell &sourceCell, 
 }
 
 inline void applyBlockZone(PathfindCell &targetCell, const PathfindCell &sourceCell,
-													 UnsignedShort *zoneEquivalency, Int firstZone, Int sizeOfZE)
+													 zoneStorageType *zoneEquivalency, Int firstZone, Int sizeOfZE)
 {	
 	DEBUG_ASSERTCRASH(sourceCell.getZone()>=firstZone && sourceCell.getZone()<firstZone+sizeOfZE, ("Memory overrun - FATAL ERROR."));
 	Int srcZone = zoneEquivalency[sourceCell.getZone()-firstZone];
@@ -1980,7 +1980,7 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 	for( j=bounds.lo.y; j<=bounds.hi.y; j++ )	{
 		for( i=bounds.lo.x; i<=bounds.hi.x; i++ )	{
 			PathfindCell *cell = &map[i][j];
-			UnsignedShort zone = cell->getZone();
+			zoneStorageType zone = cell->getZone();
 			if (minZone>zone) minZone=zone;
 			if (maxZone<zone) maxZone=zone;
 		}
@@ -2040,8 +2040,8 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 //
 // Return the zone at this location.
 //
-UnsignedShort ZoneBlock::getEffectiveZone( LocomotorSurfaceTypeMask acceptableSurfaces, 
-																					 Bool crusher, UnsignedShort zone) const
+zoneStorageType ZoneBlock::getEffectiveZone( LocomotorSurfaceTypeMask acceptableSurfaces, 
+																					 Bool crusher, zoneStorageType zone) const
 {
 	DEBUG_ASSERTCRASH(zone, ("Zone not set"));
 	if (acceptableSurfaces&LOCOMOTORSURFACE_AIR) return 1; // air is all zone 1.
@@ -2119,10 +2119,10 @@ void ZoneBlock::allocateZones(void)
 		m_zonesAllocated *= 2;
 	}
 	// pool[]ify
-	m_groundCliffZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_groundWaterZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_groundRubbleZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_crusherZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
+	m_groundCliffZones = MSGNEW("PathfindZoneInfo") zoneStorageType [m_zonesAllocated];
+	m_groundWaterZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
+	m_groundRubbleZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
+	m_crusherZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
 }
 
 
@@ -2209,12 +2209,12 @@ void PathfindZoneManager::allocateZones(void)
 	}
 	DEBUG_LOG(("Allocating zone tables of size %d\n", m_zonesAllocated));
 	// pool[]ify
-	m_groundCliffZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_groundWaterZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_groundRubbleZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_terrainZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_crusherZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_hierarchicalZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
+	m_groundCliffZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
+	m_groundWaterZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
+	m_groundRubbleZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
+	m_terrainZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
+	m_crusherZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
+	m_hierarchicalZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
 }
 
 /* Allocate zone blocks for hierarchical pathfinding.   */
@@ -2266,7 +2266,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 
 	m_maxZone = 1;	// we start using zone 0 as a flag.
 	const Int maxZones=24000;
-	UnsignedShort zoneEquivalency[maxZones];
+	zoneStorageType zoneEquivalency[maxZones];
 	Int i, j;
 	for (i=0; i<maxZones; i++) {
 		zoneEquivalency[i] = i;
@@ -2675,7 +2675,7 @@ Bool PathfindZoneManager::interactsWithBridge(Int cellX, Int cellY) const
 //
 // Return the zone at this location.
 //
-UnsignedShort PathfindZoneManager::getBlockZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher,Int cellX, Int cellY, PathfindCell **map) const
+zoneStorageType PathfindZoneManager::getBlockZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher,Int cellX, Int cellY, PathfindCell **map) const
 {
 	PathfindCell *cell = &(map[cellX][cellY]); 
 	Int blockX = cellX/ZONE_BLOCK_SIZE;
@@ -2689,7 +2689,7 @@ UnsignedShort PathfindZoneManager::getBlockZone(LocomotorSurfaceTypeMask accepta
 		DEBUG_CRASH(("Invalid block."));
 		return 0;
 	}
-	UnsignedShort zone =  m_zoneBlocks[blockX][blockY].getEffectiveZone(acceptableSurfaces, crusher, cell->getZone());
+	zoneStorageType zone =  m_zoneBlocks[blockX][blockY].getEffectiveZone(acceptableSurfaces, crusher, cell->getZone());
 	if (zone > m_maxZone) {
 		DEBUG_CRASH(("Invalid zone."));
 		return 0;
@@ -2700,7 +2700,7 @@ UnsignedShort PathfindZoneManager::getBlockZone(LocomotorSurfaceTypeMask accepta
 //
 // Return the zone at this location.
 //
-UnsignedShort PathfindZoneManager::getEffectiveTerrainZone(UnsignedShort zone) const
+zoneStorageType PathfindZoneManager::getEffectiveTerrainZone(zoneStorageType zone) const
 {
 	return m_hierarchicalZones[m_terrainZones[zone]];
 }
@@ -2708,8 +2708,8 @@ UnsignedShort PathfindZoneManager::getEffectiveTerrainZone(UnsignedShort zone) c
 //
 // Return the zone at this location.
 //
-UnsignedShort PathfindZoneManager::getEffectiveZone( LocomotorSurfaceTypeMask acceptableSurfaces, 
-																										Bool crusher, UnsignedShort zone) const
+zoneStorageType PathfindZoneManager::getEffectiveZone( LocomotorSurfaceTypeMask acceptableSurfaces, 
+																										Bool crusher, zoneStorageType zone) const
 {
 	//DEBUG_ASSERTCRASH(zone, ("Zone not set"));
 	if (zone>m_maxZone) {
@@ -3040,7 +3040,7 @@ Bool PathfindLayer::connectsZones(PathfindZoneManager *zm, const LocomotorSet& l
 					PathfindCell *groundCell = TheAI->pathfinder()->getCell(LAYER_GROUND, i+m_xOrigin, j+m_yOrigin);
 					DEBUG_ASSERTCRASH(groundCell, ("Should have cell."));
 					if (groundCell) {
-						UnsignedShort zone = zm->getEffectiveZone(locoSet.getValidSurfaces(),
+						zoneStorageType zone = zm->getEffectiveZone(locoSet.getValidSurfaces(),
 							true, groundCell->getZone());
 						zone = zm->getEffectiveTerrainZone(zone);
 						if (zone == zone1) found1 = true;
@@ -5998,7 +5998,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	worldToCell( to, &cell );
 
 	if (!checkDestination(obj, cell.x, cell.y, destinationLayer, radius, centerInCell)) {
-		return false;
+		return NULL;
 	}
 	// determine start cell
 	ICoord2D startCellNdx;
@@ -6291,7 +6291,8 @@ Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, Pathfi
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
-		for( PathNode *node = path->getFirstNode(); node; node = node->getNext() )
+		PathNode *node = path->getFirstNode();
+		for( ; node; node = node->getNext() )
 		{
 
 			// create objects to show path - they decay
@@ -6803,8 +6804,8 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
  * Uses A* algorithm.
  */
 void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord2D &delta, PathfindCell *parentCell, 
-																				 PathfindCell *goalCell, UnsignedShort parentZone, 
-																				 UnsignedShort *examinedZones, Int &numExZones,
+																				 PathfindCell *goalCell, zoneStorageType parentZone, 
+																				 zoneStorageType *examinedZones, Int &numExZones,
 																				 Bool crusher, Int &cellCount)
 {
 	if (scanCell.x<m_extent.lo.x || scanCell.x>m_extent.hi.x ||
@@ -6826,12 +6827,12 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 		}
 		PathfindCell *adjNewCell = getCell(LAYER_GROUND, adjacentCell.x, adjacentCell.y); 
 		if (adjNewCell->hasInfo() && (adjNewCell->getOpen() || adjNewCell->getClosed())) return; // already looked at this one.
-		UnsignedShort parentGlobalZone = m_zoneManager.getEffectiveZone(LOCOMOTORSURFACE_GROUND, crusher, parentZone);
+		zoneStorageType parentGlobalZone = m_zoneManager.getEffectiveZone(LOCOMOTORSURFACE_GROUND, crusher, parentZone);
 
 		/// @todo - somehow out of bounds or bogus newZone.
-		UnsignedShort newZone = m_zoneManager.getBlockZone(LOCOMOTORSURFACE_GROUND,
+		zoneStorageType newZone = m_zoneManager.getBlockZone(LOCOMOTORSURFACE_GROUND,
 							crusher, adjacentCell.x, adjacentCell.y, m_map);
-		UnsignedShort newGlobalZone = m_zoneManager.getEffectiveZone(LOCOMOTORSURFACE_GROUND, crusher, newZone);
+		zoneStorageType newGlobalZone = m_zoneManager.getEffectiveZone(LOCOMOTORSURFACE_GROUND, crusher, newZone);
 		if (newGlobalZone != parentGlobalZone) {
 			return; // can't step over. jba.
 		}
@@ -6971,7 +6972,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 
 	Int cellCount = 0;
 
-	UnsignedShort goalBlockZone;
+	zoneStorageType goalBlockZone;
 	ICoord2D goalBlockNdx;
 	if (goalCell->getLayer()==LAYER_GROUND) {
 		goalBlockZone = m_zoneManager.getBlockZone(locomotorSurface,
@@ -7038,7 +7039,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		parentCell = m_openList;
 		m_openList = parentCell->removeFromOpenList(m_openList);
 
-		UnsignedShort parentZone;
+		zoneStorageType parentZone;
 		if (parentCell->getLayer()==LAYER_GROUND) {
 			parentZone = m_zoneManager.getBlockZone(locomotorSurface,
 				crusher, parentCell->getXIndex(), parentCell->getYIndex(), m_map);
@@ -7196,7 +7197,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		m_closedList = parentCell->putOnClosedList( m_closedList );
 
 		Int i;
-		UnsignedShort examinedZones[PathfindZoneManager::ZONE_BLOCK_SIZE];
+		zoneStorageType examinedZones[PathfindZoneManager::ZONE_BLOCK_SIZE];
 		Int numExZones = 0;
 		// Left side.
 		if (blockX>0) {
@@ -8379,7 +8380,8 @@ Path *Pathfinder::buildActualPath( const Object *obj, LocomotorSurfaceTypeMask a
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
-		for( PathNode *node = path->getFirstNode(); node; node = node->getNext() )
+		PathNode *node = path->getFirstNode();
+		for( ; node; node = node->getNext() )
 		{
 
 			// create objects to show path - they decay
@@ -9553,7 +9555,7 @@ if (g_UT_startTiming) return false;
 Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 											Path *pathToAvoid, Object *otherObj2, Path *pathToAvoid2)
 {
-	if (m_isMapReady == false) return false; // Should always be ok.
+	if (m_isMapReady == false) return NULL; // Should always be ok.
 #if defined _DEBUG || defined _INTERNAL
 	Int startTimeMS = ::GetTickCount();
 #endif
@@ -9585,9 +9587,9 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	worldToCell(&startPos, &startCellNdx);
 	PathfindCell *parentCell = getClippedCell( obj->getLayer(), obj->getPosition() ); 
 	if (parentCell == NULL)
-		return false;
+		return NULL;
 	if (!obj->getAIUpdateInterface()) {
-		return false; // shouldn't happen, but can't move it without an ai.
+		return NULL; // shouldn't happen, but can't move it without an ai.
 	}
 	const LocomotorSet& locomotorSet = obj->getAIUpdateInterface()->getLocomotorSet();
 
@@ -9608,7 +9610,7 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	}
 
 	if (!parentCell->allocateInfo(startCellNdx)) {
-		return false;
+		return NULL;
 	}
 	parentCell->startPathfind(NULL);
 
@@ -9759,15 +9761,15 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	//worldToCell(obj->getPosition(), &startCellNdx);
 	PathfindCell *parentCell = getClippedCell( obj->getLayer(), &currentPosition); 
 	if (parentCell == NULL)
-		return false;
+		return NULL;
 	if (!obj->getAIUpdateInterface()) {
-		return false; // shouldn't happen, but can't move it without an ai.
+		return NULL; // shouldn't happen, but can't move it without an ai.
 	}
 
 	m_isTunneling = false;
 	
 	if (!parentCell->allocateInfo(startCellNdx)) {
-		return false;
+		return NULL;
 	}
 	parentCell->startPathfind( NULL);
 
@@ -9904,7 +9906,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		candidateGoal->releaseInfo();
 	}
 	cleanOpenAndClosedLists();
-	return false;
+	return NULL;
 }
 
 
@@ -9941,7 +9943,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 			AS_INT(victimPos->x), AS_INT(victimPos->y), AS_INT(victimPos->z)));
 	}
 	*/
-	if (m_isMapReady == false) return false; // Should always be ok.
+	if (m_isMapReady == false) return NULL; // Should always be ok.
 #if defined _DEBUG || defined _INTERNAL
 //	Int startTimeMS = ::GetTickCount();
 #endif
@@ -10026,14 +10028,14 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	worldToCell(&objPos, &startCellNdx);
 	PathfindCell *parentCell = getClippedCell( obj->getLayer(), &objPos ); 
 	if (parentCell == NULL)
-		return false;
+		return NULL;
 	if (!obj->getAIUpdateInterface()) {
-		return false; // shouldn't happen, but can't move it without an ai.
+		return NULL; // shouldn't happen, but can't move it without an ai.
 	}
 	const PathfindCell *startCell = parentCell;
 
 	if (!parentCell->allocateInfo(startCellNdx)) {
-		return false;
+		return NULL;
 	}
 	parentCell->startPathfind(NULL);
 
@@ -10047,7 +10049,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		return NULL;
 
  	if (!goalCell->allocateInfo(victimCellNdx)) {
-		return false;
+		return NULL;
 	}
 
 	// initialize "open" list to contain start cell
@@ -10202,7 +10204,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		goalCell->releaseInfo();
 	}
 	cleanOpenAndClosedLists();
-	return false;
+	return NULL;
 }
 
 /** Find a short, valid path to a location that is safe from the repulsors.  */
@@ -10210,7 +10212,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 		const Coord3D *from, const Coord3D* repulsorPos1, const Coord3D* repulsorPos2, Real repulsorRadius) 
 {
 	//CRCDEBUG_LOG(("Pathfinder::findSafePath()\n"));
-	if (m_isMapReady == false) return false; // Should always be ok.
+	if (m_isMapReady == false) return NULL; // Should always be ok.
 #if defined _DEBUG || defined _INTERNAL
 //	Int startTimeMS = ::GetTickCount();
 #endif
@@ -10236,12 +10238,12 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 	worldToCell(obj->getPosition(), &startCellNdx);
 	PathfindCell *parentCell = getClippedCell( obj->getLayer(), obj->getPosition() ); 
 	if (parentCell == NULL)
-		return false;
+		return NULL;
 	if (!obj->getAIUpdateInterface()) {
-		return false; // shouldn't happen, but can't move it without an ai.
+		return NULL; // shouldn't happen, but can't move it without an ai.
 	}
 	if (!parentCell->allocateInfo(startCellNdx)) {
-		return false;
+		return NULL;
 	}
 	parentCell->startPathfind( NULL);
 
@@ -10360,7 +10362,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 #endif
 	m_isTunneling = false;
 	cleanOpenAndClosedLists();
-	return false;
+	return NULL;
 }
 
 //-----------------------------------------------------------------------------

@@ -19,13 +19,13 @@
 // playerlistdlg.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "playerlistdlg.h"
-#include "MapObjectProps.h"
+#include "mapobjectprops.h"
 #include "WorldBuilderDoc.h"
-#include "cundoable.h"
-#include "AddPlayerDialog.h"
+#include "CUndoable.h"
+#include "addplayerdialog.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/MultiplayerSettings.h"
@@ -453,7 +453,8 @@ void PlayerListDlg::updateTheUI(void)
 	list->ResetContent();
 
 	Int len = m_sides.getNumSides();
-	for (int i = 0; i < len; i++)
+	int i = 0;
+	for (; i < len; i++)
 	{
 		Dict *d = m_sides.getSideInfo(i)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
@@ -687,7 +688,8 @@ void PlayerListDlg::OnSelectPlayerColor()
 		pCombo->GetWindowText(str);
 		Int index = -1;
 		Int numColors = TheMultiplayerSettings->getNumColors();
-		for (Int c=0; c<numColors; ++c)
+		Int c=0;
+		for (; c<numColors; ++c)
 		{
 			MultiplayerColorDefinition *def = TheMultiplayerSettings->getColor(c);
 			if (!def)

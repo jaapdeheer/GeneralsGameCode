@@ -47,7 +47,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
-#include "WWLib/Targa.h"
+#include "WWLib/TARGA.H"
 #include "ImageDirectory.h"
 #include "ImageInfo.h"
 #include "TexturePage.h"
@@ -90,7 +90,7 @@ public:
 	Int getTargetWidth( void );  ///< get target width
 	Int getTargetHeight( void );  ///< bet target height
 
-	void statusMessage( char *message );  ///< set a status message
+	void statusMessage( const char *message );  ///< set a status message
 
 	UnsignedInt getImageCount( void );  ///< get image count
 	ImageInfo *getImage( Int index );  ///< get image

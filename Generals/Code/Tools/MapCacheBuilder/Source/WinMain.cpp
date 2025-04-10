@@ -54,7 +54,7 @@
 #include "Common/FileSystem.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
-#include "Common/SubSystemInterface.h"
+#include "Common/SubsystemInterface.h"
 #include "GameClient/MapUtil.h"
 #include "W3DDevice/Common/W3DModuleFactory.h"
 
@@ -100,7 +100,7 @@
 #include "MilesAudioDevice/MilesAudioManager.h"
 
 #include <io.h>
-#include "win32device/GameClient/Win32Mouse.h"
+#include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
@@ -134,7 +134,7 @@ HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
 /// just to satisfy the game libraries we link to
 HWND ApplicationHWnd = NULL;
 
-char *gAppPrefix = "MC_";
+const char *gAppPrefix = "MC_";
 
 // Where are the default string files?
 const Char *g_strFile = "data\\Generals.str";
@@ -181,7 +181,7 @@ static char* strtrim(char* buffer)
 	return buffer;
 }
 
-static char *nextParam(char *newSource, char *seps)
+static char *nextParam(char *newSource, const char *seps)
 {
 	static char *source = NULL;
 	if (newSource)

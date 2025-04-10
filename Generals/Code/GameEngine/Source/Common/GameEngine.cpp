@@ -42,7 +42,7 @@
 #include "Common/INIException.h"
 #include "Common/MessageStream.h"
 #include "Common/ThingFactory.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/LocalFileSystem.h"
@@ -108,7 +108,7 @@
 #include "Common/Player.h"
 
 
-#include "Common/Version.h"
+#include "Common/version.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -446,7 +446,6 @@ void GameEngine::init( int argc, char *argv[] )
 		// load the initial shell screen
 		//TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 		
-#if !defined(_PLAYTEST)
 		// This allows us to run a map/reply from the command line
 		if (TheGlobalData->m_initialFile.isEmpty() == FALSE)
 		{
@@ -474,7 +473,6 @@ void GameEngine::init( int argc, char *argv[] )
 				TheRecorder->playbackFile(fname);
 			}
 		}
-#endif
 
 		// 
 		if (TheMapCache && TheGlobalData->m_shellMapOn)

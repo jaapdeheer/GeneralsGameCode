@@ -53,7 +53,7 @@
 
 
 #include	"always.h"
-#include	"rawfile.h"
+#include	"RAWFILE.H"
 #include	<direct.h>
 //#include	<share.h>
 #include	<stddef.h>
@@ -291,6 +291,29 @@ void RawFileClass::Reset(void)
 {
 	Close();
 	Filename = "";
+}
+
+/***********************************************************************************************
+ * RawFileClass::File_Name -- Returns with the filename associate with the file object.        *
+ *                                                                                             *
+ *    Use this routine to determine what filename is associated with this file object. If no   *
+ *    filename has yet been assigned, then this routing will return NULL.                      *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  Returns with a pointer to the file name associated with this file object or NULL   *
+ *          if one doesn't exist.                                                              *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/18/1994 JLB : Created.                                                                 *
+ *   11/25/2001 Jani: Note that this is virtual function and thus can't be inlined. Is there a *
+ *					 reason for it to be virtual?																	  *
+ *=============================================================================================*/
+char const * RawFileClass::File_Name(void) const
+{
+	return(Filename);
 }
 
 /***********************************************************************************************

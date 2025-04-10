@@ -34,6 +34,8 @@
 
 #include <math.h>
 #include <string.h>
+// TheSuperHackers @compile feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
+#include <Utility/compat.h>
 
 /*
 **	Turn off some unneeded warnings.
@@ -131,10 +133,15 @@ typedef char							Byte;							// 1 byte		USED TO BE "SignedByte"
 typedef char							Char;							// 1 byte of text
 typedef bool							Bool;							// 
 // note, the types below should use "long long", but MSVC doesn't support it yet
+#ifdef _MSC_VER
 typedef __int64						Int64;							// 8 bytes 
 typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
+#else
+typedef long long						Int64;							// 8 bytes 
+typedef unsigned long long	UnsignedInt64;	  	// 8 bytes 
+#endif
 
-#include "Lib/Trig.h"
+#include "Lib/trig.h"
 
 //-----------------------------------------------------------------------------
 typedef wchar_t WideChar;  ///< multi-byte character representations
@@ -169,7 +176,8 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 //-----------------------------------------------------------------------------
 // For twiddling bits
 //-----------------------------------------------------------------------------
-#define BitTest( x, i ) ( ( (x) & (i) ) != 0 )
+// TheSuperHackers @compile xezon 17/03/2025 Renames BitTest to BitIsSet to prevent conflict with BitTest macro from winnt.h
+#define BitIsSet( x, i ) ( ( (x) & (i) ) != 0 )
 #define BitSet( x, i ) ( (x) |= (i) )
 #define BitClear( x, i ) ( (x ) &= ~(i) )
 #define BitToggle( x, i ) ( (x) ^= (i) )
@@ -183,10 +191,14 @@ __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	__asm {
 		fld [f]
 		fistp [i]
 	}
+#else
+	i = lroundf(f);
+#endif
 
 	return i;
 }
@@ -195,6 +207,7 @@ __forceinline long fast_float2long_round(float f)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
   _asm
   {
     mov ecx,[f]
@@ -207,6 +220,15 @@ __forceinline float fast_float_trunc(float f)
     and [f],eax
   }
   return f;
+#else
+  unsigned x = *(unsigned *)&f;
+  unsigned char exp = x >> 23;
+  int mask = exp < 127 ? 0 : 0xff800000;
+  exp -= 127;
+  mask >>= exp & 31;
+  x &= mask;
+  return *(float *)&x;
+#endif
 }
 
 // same here, fast floor function
@@ -403,7 +425,7 @@ struct Coord3D
 						z == r.z);
 	}
 
-	Bool operator==( const Coord3D &r )
+	Bool operator==( const Coord3D &r ) const
 	{
 		return (x == r.x &&
 						y == r.y &&

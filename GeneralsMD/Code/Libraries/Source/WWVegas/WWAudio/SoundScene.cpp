@@ -35,14 +35,14 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "soundscene.h"
-#include "soundcullobj.h"
-#include "logicalsound.h"
-#include "logicallistener.h"
+#include "SoundScene.h"
+#include "SoundCullObj.h"
+#include "LogicalSound.h"
+#include "LogicalListener.h"
 #include "chunkio.h"
 #include "persistfactory.h"
 #include "wwprofile.h"
-#include "threads.h"
+#include "Threads.h"
 #include "wwmemlog.h"
 
 
@@ -278,7 +278,7 @@ SoundSceneClass::Collect_Audible_Sounds
 		float length2 = (pos - listener_pos).Length2 ();
 		if (length2 <= radius2) {
 			
-			AudibleInfoClass *audible_info = W3DNEW AudibleInfoClass (sound_obj, length2);
+			AudibleInfoClass *audible_info = new AudibleInfoClass (sound_obj, length2);
 			list.Add (audible_info);
 			
 			//
@@ -310,7 +310,7 @@ SoundSceneClass::Collect_Audible_Sounds
 		float length2 = (pos - listener_pos).Length2 ();
 		if (length2 <= radius2) {
 			
-			AudibleInfoClass *audible_info = W3DNEW AudibleInfoClass (sound_obj, length2);
+			AudibleInfoClass *audible_info = new AudibleInfoClass (sound_obj, length2);
 			list.Add (audible_info);
 
 			//

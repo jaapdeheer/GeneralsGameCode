@@ -20,9 +20,9 @@
 // TransDB.cpp
 //
 
-#include "stdAfx.h"
-#include "transdb.h"
-#include "Babylondlg.h"
+#include "StdAfx.h"
+#include "TransDB.h"
+#include "BabylonDlg.h"
 #include "Babylon.h"
 #include "assert.h"
 #include "bin.h"
@@ -76,7 +76,7 @@ LANGINFO *GetLangInfo ( LangID langid )
 	return NULL;
 }
 
-char *GetLangName ( LangID langid )
+const char *GetLangName ( LangID langid )
 {
 	LANGINFO *item;
 
@@ -118,7 +118,7 @@ TransDB* FirstTransDB ( void )
 	return NULL;
 }
 
-TransDB::TransDB ( char *cname )
+TransDB::TransDB ( const char *cname )
 {
 	text_bin = new Bin ();
 	text_id_bin = new BinID ();

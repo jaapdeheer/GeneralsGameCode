@@ -85,7 +85,6 @@
 #include "predlod.h"
 #include "camera.h"
 #include "scene.h"
-#include "texfcach.h"
 #include "registry.h"
 #include "segline.h"
 #include "shader.h"
@@ -98,17 +97,17 @@
 #include "statistics.h"
 #include "pointgr.h"
 #include "ffactory.h"
-#include "ini.h"
+#include "INI.H"
 #include "dazzle.h"
 #include "meshmdl.h"
 #include "dx8renderer.h"
 #include "render2d.h"
 #include "bound.h"
 #include "rddesc.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include <cstdio>
 #include "dx8wrapper.h"
-#include "targa.h"
+#include "TARGA.H"
 #include "sortingrenderer.h"
 #include "thread.h"
 #include "cpudetect.h"
@@ -205,9 +204,9 @@ WW3D::PrelitModeEnum									WW3D::PrelitMode = PRELIT_MODE_LIGHTMAP_MULTI_PASS;
 bool														WW3D::ExposePrelit = false;
 
 bool														WW3D::SnapshotActivated=false;
+bool														WW3D::ThumbnailEnabled=true;
 
 WW3D::MeshDrawModeEnum								WW3D::MeshDrawMode = MESH_DRAW_MODE_OLD;
-WW3D::TextureThumbnailModeEnum					WW3D::TextureThumbnailMode = TEXTURE_THUMBNAIL_MODE_ON;
 WW3D::TextureCompressionModeEnum					WW3D::TextureCompressionMode = TEXTURE_COMPRESSION_ENABLE;
 WW3D::NPatchesGapFillingModeEnum					WW3D::NPatchesGapFillingMode = NPATCHES_GAP_FILLING_ENABLED;
 unsigned													WW3D::NPatchesLevel=1;
@@ -251,10 +250,10 @@ void WW3D::Set_NPatches_Level(unsigned level)
 	NPatchesLevel = level; 
 }
 
-void WW3D::Set_Texture_Thumbnail_Mode (TextureThumbnailModeEnum mode)
+void WW3D::Set_Thumbnail_Enabled (bool b)
 {
-	if (TextureThumbnailMode!=mode) {
-		TextureThumbnailMode = mode;
+	if (ThumbnailEnabled!=b) {
+		ThumbnailEnabled = b;
 		_Invalidate_Textures();
 	}
 }

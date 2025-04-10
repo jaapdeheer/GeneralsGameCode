@@ -47,8 +47,8 @@
 #include "texture.h"
 #include "ww3dformat.h"
 #include <vp.h>
-#include <ini.h>
-#include <point.h>
+#include <INI.H>
+#include <Point.h>
 #include <stdio.h>
 #include <hashtemplate.h>
 #include <wwstring.h>
@@ -89,7 +89,8 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 	// Determine how many metals are in this file
 	char section[255];
 
-	for (int lp = 0; ; lp++) {
+	int lp = 0;
+	for (; ; lp++) {
 		sprintf(section, "Metal%02d", lp);
 		if (!ini.Find_Section(section)) {
 			break;			// NAK - Mar 8, 2000: changed to a break to fix off by one error in lp
@@ -130,9 +131,9 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 
 	for (int i = 0; i < lp; i++) {		
 		// Create texture. NOTE: we should add code here to ensure we use a native texture format
-		Textures[i]=NEW_REF(TextureClass,(METALMAP_SIZE,METALMAP_SIZE,WW3D_FORMAT_A8R8G8B8,TextureClass::MIP_LEVELS_1));
-		Textures[i]->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		Textures[i]->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+		Textures[i]=NEW_REF(TextureClass,(METALMAP_SIZE,METALMAP_SIZE,WW3D_FORMAT_A8R8G8B8,MIP_LEVELS_1));
+		Textures[i]->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		Textures[i]->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		StringClass tex_name;
 		tex_name.Format("!m%02d.tga", i);		
 		Textures[i]->Set_Texture_Name(tex_name);		

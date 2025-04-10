@@ -20,7 +20,10 @@
 #define PROCESS_HEADER
 
 #include <windows.h>
-#include "wstypes.h"
+#include "WSTYPES.H"
+
+namespace patchget
+{
 
 class Process
 {
@@ -38,5 +41,6 @@ class Process
 bit8 Create_Process(Process &process);
 bit8 Wait_Process(Process &process, DWORD *exit_code=NULL);
 
+} // namespace patchget
 
 #endif

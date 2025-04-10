@@ -60,10 +60,10 @@
 #include "GameClient/IMEManager.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32GameEngine.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "BuildVersion.h"
 #include "GeneratedVersion.h"
-#include "Resource.h"
+#include "resource.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -80,7 +80,7 @@ DWORD TheMessageTime = 0;	///< For getting the time that a message was posted fr
 
 const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
-char *gAppPrefix = ""; /// So WB can have a different debug log file name.
+const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
 
 static HANDLE GeneralsMutex = NULL;
 #define GENERALS_GUID "685EAFF2-3216-4265-B047-251C5F4B82F3"
@@ -790,7 +790,7 @@ static char* strtrim(char* buffer)
 	return buffer;
 }
 
-char *nextParam(char *newSource, char *seps)
+char *nextParam(char *newSource, const char *seps)
 {
 	static char *source = NULL;
 	if (newSource)

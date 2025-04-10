@@ -72,7 +72,7 @@ class StealthUpdateModuleData : public UpdateModuleData
 public:
 	UnsignedInt		m_stealthDelay;
 	UnsignedInt		m_stealthLevel;
-	UnsignedInt   m_hintDetectableStates;
+	ObjectStatusMaskType	m_hintDetectableStates;
 	Real					m_stealthSpeed;
 	Real					m_friendlyOpacityMin;
 	Real					m_friendlyOpacityMax;
@@ -95,7 +95,6 @@ public:
 		//
 		m_stealthDelay		= UINT_MAX;
 		m_stealthLevel		= 0;
-		m_hintDetectableStates = 0;
 		m_stealthSpeed		= 0.0f;
 		m_friendlyOpacityMin = 0.5f;
 		m_friendlyOpacityMax = 1.0f;

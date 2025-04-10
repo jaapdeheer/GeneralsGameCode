@@ -21,9 +21,12 @@
 // Author: Matthew D. Campbell, July 2002
 
 #include "debug.h"
-#include "chatapi.h"
+#include "CHATAPI.H"
 #include "DownloadManager.h"
-#include "resource.h"
+#include "RESOURCE.H"
+
+namespace patchget
+{
 
 DownloadManager *TheDownloadManager = NULL;
 
@@ -208,3 +211,5 @@ HRESULT DownloadManager::OnStatusUpdate( int status )
 	DEBUG_LOG(("DownloadManager::OnStatusUpdate(): %s(%d)\n", s.c_str(), status));
 	return S_OK;
 }
+
+} // namespace patchget

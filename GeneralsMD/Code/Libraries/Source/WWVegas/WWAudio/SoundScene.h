@@ -44,11 +44,11 @@
 
 #include "aabtreecull.h"
 #include "gridcull.h"
-#include "listener.h"
-#include "vector.h"
-#include "priorityvector.h"
-#include "soundcullobj.h"
-#include "logicallistener.h"
+#include "Listener.h"
+#include "Vector.H"
+#include "PriorityVector.h"
+#include "SoundCullObj.h"
+#include "LogicalListener.h"
 #include "multilist.h"
 
 // Forward declarations
@@ -178,6 +178,7 @@ class SoundSceneClass
 		//////////////////////////////////////////////////////////////////////
 		//	Collection methods
 		//////////////////////////////////////////////////////////////////////		
+	public:
 		class AudibleInfoClass : public MultiListObjectClass, public AutoPoolClass<AudibleInfoClass, 64>
 		{
 		public:
@@ -193,6 +194,7 @@ class SoundSceneClass
 			float						distance2;
 		};
 
+	protected:
 		typedef MultiListClass<AudibleInfoClass>	COLLECTED_SOUNDS;
 
 		virtual void			Collect_Audible_Sounds (Listener3DClass *listener, COLLECTED_SOUNDS &list);

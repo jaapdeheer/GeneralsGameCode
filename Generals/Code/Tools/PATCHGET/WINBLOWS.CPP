@@ -23,7 +23,18 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "winblows.h"
+#include "WINBLOWS.H"
+#include "CHATAPI.H"
+
+
+// TheSuperHackers @fix xezon 13/03/2025 Fix debug linker errors by
+// adding "patchget" namespaces and these globals here.
+// just to satisfy the game libraries we link to
+HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
+HWND ApplicationHWnd = NULL;
+const char *g_strFile = "data\\Generals.str";
+const char *g_csfFile = "data\\%s\\Generals.csf";
+const char *gAppPrefix = "patchget_"; // prefix to the debug log.
 
 
 HINSTANCE Global_instance;
@@ -79,7 +90,7 @@ int PASCAL WinMain( HINSTANCE instance, HINSTANCE, char *command_line, int comma
 
     } while ( command_char != 0 && command_char != 13 && argc<20 );
 
-    return(main(argc,argv));
+    return(patchget::main(argc,argv));
 
 } /* WinMain */
 

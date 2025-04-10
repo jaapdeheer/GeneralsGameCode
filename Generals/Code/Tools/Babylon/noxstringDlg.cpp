@@ -20,24 +20,24 @@
 // noxstringDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "noxstring.h"
 #include "noxstringDlg.h"
 #include "VIEWDBSII.h"
-#include "verifydlg.h"
-#include "exportdlg.h"
-#include "report.h"
-#include "matchdlg.h"
-#include "retranslatedlg.h"
-#include "generatedlg.h"
+#include "VerifyDlg.h"
+#include "ExportDlg.h"
+#include "Report.h"
+#include "MatchDlg.h"
+#include "RetranslateDlg.h"
+#include "GenerateDlg.h"
 #include "DlgProxy.h"
-#include "xlstuff.h"
+#include "XLStuff.h"
 #include "fileops.h"
 #include <time.h>
 #include "iff.h"
 #include "loadsave.h"
 #include "expimp.h"
-#include "proceeddlg.h"
+#include "ProceedDlg.h"
 #include "transcs.h"
 
 #ifdef _DEBUG
@@ -696,7 +696,7 @@ int CNoxstringDlg::SaveLog()
 	}
 
 	{
-		char *buffer = "\nLOG START ******************\n\n";
+		const char *buffer = "\nLOG START ******************\n\n";
 		fwrite ( buffer, 1, strlen ( buffer ), log );
 	}
 
@@ -713,7 +713,7 @@ int CNoxstringDlg::SaveLog()
 	}
 
 	{
-		char *buffer = "\nQuiting Babylon\n\nLOG END ******************\n\n";
+		const char *buffer = "\nQuiting Babylon\n\nLOG END ******************\n\n";
 		fwrite ( buffer, 1, strlen ( buffer ), log );
 	}
 
@@ -1196,7 +1196,7 @@ int		CNoxstringDlg::CanOperate ( void )
 
 	if ( NoxstrDB->IsChanged() || NoxstrDB->HasErrors () )
 	{
-		char *string = "Unknown problem!\n\n\nProceed anyway?";
+		const char *string = "Unknown problem!\n\n\nProceed anyway?";
 
 		if ( NoxstrDB->HasErrors ())
 		{
@@ -2160,7 +2160,7 @@ int CNoxstringDlg::ValidateStrFile( const char *filename)
 {
 	STARTUPINFO StartupInfo = { 0 };
 	PROCESS_INFORMATION ProcessInfo;
-	char *results = "strcheck.rst";
+	const char *results = "strcheck.rst";
 	int errors = 0;
 	FILE *file = NULL;
 

@@ -170,7 +170,7 @@ __int64 Total_Get_Texture_Time=0;
 //---------------------------------------------------------------------
 TextureClass *W3DAssetManager::Get_Texture(
 	const char * filename,
-	TextureClass::MipCountType mip_level_count,
+	MipCountType mip_level_count,
 	WW3DFormat texture_format,
 	bool allow_compression
 )
@@ -410,7 +410,8 @@ static void remapTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
 
 	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	Int y=0;
+	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
 	{	
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
@@ -513,7 +514,8 @@ static void remapTexture32Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
 
 	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	Int y=0;
+	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
 	{	
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
@@ -638,7 +640,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())	
-		TextureLoader::Request_High_Priority_Loading(texture, (TextureClass::MipCountType)texture->Get_Mip_Level_Count());
+		TextureLoader::Request_High_Priority_Loading(texture, (MipCountType)texture->Get_Mip_Level_Count());
 
 	SurfaceClass::SurfaceDescription desc;
 	SurfaceClass *newsurf, *oldsurf;
@@ -659,12 +661,12 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	if (*(name+3) == 'A' || *(name+3) == 'a')
 		Remap_Palette(newsurf,color, false, true );	//texture only contains a palette stored in top row.
 
-	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(TextureClass::MipCountType)texture->Get_Mip_Level_Count()));
-	newtex->Set_Mag_Filter(texture->Get_Mag_Filter());
-	newtex->Set_Min_Filter(texture->Get_Min_Filter());
-	newtex->Set_Mip_Mapping(texture->Get_Mip_Mapping());
-	newtex->Set_U_Addr_Mode(texture->Get_U_Addr_Mode());
-	newtex->Set_V_Addr_Mode(texture->Get_V_Addr_Mode());
+	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(MipCountType)texture->Get_Mip_Level_Count()));
+	newtex->Get_Filter().Set_Mag_Filter(texture->Get_Filter().Get_Mag_Filter());
+	newtex->Get_Filter().Set_Min_Filter(texture->Get_Filter().Get_Min_Filter());
+	newtex->Get_Filter().Set_Mip_Mapping(texture->Get_Filter().Get_Mip_Mapping());
+	newtex->Get_Filter().Set_U_Addr_Mode(texture->Get_Filter().Get_U_Addr_Mode());
+	newtex->Get_Filter().Set_V_Addr_Mode(texture->Get_Filter().Get_V_Addr_Mode());
 
 	char newname[512];	
 	Munge_Texture_Name(newname, name, color);
@@ -766,7 +768,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	{	
 		// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) 
 		{
 			::lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
@@ -973,7 +975,7 @@ void W3DAssetManager::Recolor_Vertex_Material(VertexMaterialClass *vmat, const i
 
 #ifdef DUMP_PERF_STATS
 __int64 Total_Load_3D_Assets=0;
-static Load_3D_Asset_Recursions=0;
+static Int Load_3D_Asset_Recursions=0;
 #endif
 //---------------------------------------------------------------------
 bool W3DAssetManager::Load_3D_Assets( const char * filename )
@@ -1075,7 +1077,7 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 #ifdef DUMP_PERF_STATS
 __int64 Total_Get_HAnim_Time=0;
-static HAnim_Recursions=0;
+static Int HAnim_Recursions=0;
 #endif
 //---------------------------------------------------------------------
 HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)
@@ -1519,7 +1521,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	return w3dproto->Create();
 }
 
-TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, TextureClass::MipCountType mip_level_count)
+TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, MipCountType mip_level_count)
 {
 	WWPROFILE( "W3DAssetManager::Get_Texture with HSV shift" );
 
@@ -1623,7 +1625,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())	
-		TextureLoader::Request_High_Priority_Loading(texture, (TextureClass::MipCountType)texture->Get_Mip_Level_Count());
+		TextureLoader::Request_High_Priority_Loading(texture, (MipCountType)texture->Get_Mip_Level_Count());
 
 	SurfaceClass::SurfaceDescription desc;
 	SurfaceClass *newsurf, *oldsurf, *smallsurf;
@@ -1631,7 +1633,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 	// if texture is monochrome and no value shifting
 	// return NULL	
-	smallsurf=texture->Get_Surface_Level((TextureClass::MipCountType)texture->Get_Mip_Level_Count()-1);
+	smallsurf=texture->Get_Surface_Level((MipCountType)texture->Get_Mip_Level_Count()-1);
 	if (hsv_shift.Z==0.0f && smallsurf->Is_Monochrome())
 	{
 		REF_PTR_RELEASE(smallsurf);
@@ -1644,7 +1646,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	newsurf=NEW_REF(SurfaceClass,(desc.Width,desc.Height,desc.Format));
 	newsurf->Copy(0,0,0,0,desc.Width,desc.Height,oldsurf);
 	newsurf->Hue_Shift(hsv_shift);
-	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(TextureClass::MipCountType)texture->Get_Mip_Level_Count()));
+	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(MipCountType)texture->Get_Mip_Level_Count()));
 	newtex->Set_Mag_Filter(texture->Get_Mag_Filter());
 	newtex->Set_Min_Filter(texture->Get_Min_Filter());
 	newtex->Set_Mip_Mapping(texture->Get_Mip_Mapping());

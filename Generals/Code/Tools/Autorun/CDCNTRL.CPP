@@ -61,9 +61,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"assert.h"
-#include	"cdcntrl.h"
-#include	"winfix.h"
-#include	"wnd_file.h"
+#include	"CDCNTRL.H"
+#include	"WinFix.H"
+#include	"Wnd_File.h"
 #pragma	warning(disable : 4201)
 #include	<winioctl.h>
 #include	<tchar.h>
@@ -73,7 +73,7 @@
 CDControlClass CDControl;
 
 
-void Last_Error_Text ( LPTSTR szPrefix, HRESULT hr );
+void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr );
 
 
 /***********************************************************************************************
@@ -1079,7 +1079,7 @@ bool WINAPI CDControlClass::Unlock_Logical_Volume (HANDLE vwin32, char drive)
  *   6/24/99 4:44PM MML : Created																*
  *==============================================================================================*/
 
-void Last_Error_Text ( LPTSTR szPrefix, HRESULT hr ) 
+void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr )
 {
 	LPVOID		szMessage; 
 	char		szDisplay[1000];
