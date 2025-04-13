@@ -436,6 +436,10 @@ void GameLogic::reset( void )
 	m_thingTemplateBuildableOverrides.clear();
 	m_controlBarOverrides.clear();
 
+	// destroy all objects
+	// TheSuperHackers @info xezon 10/04/2025 Objects need to be destroyed before clearing the object vector.
+	destroyAllObjectsImmediate();
+
 	// set the hash to be rather large. We need to optimize this value later.
 //	m_objHash.clear();
 //	m_objHash.resize(OBJ_HASH_SIZE);
@@ -446,9 +450,6 @@ void GameLogic::reset( void )
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	setFPMode();
-
-	// destroy all objects
-	destroyAllObjectsImmediate();
 
 	m_nextObjID = (ObjectID)1;
 
@@ -2851,9 +2852,9 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 	UpdateModulePtr* pI = &m_sleepyUpdates[i];
 
 	// our children are i*2 and i*2+1
-  Int child = ((i+1)<<1)-1;
-	UpdateModulePtr* pChild = &m_sleepyUpdates[child];
-	UpdateModulePtr* pSZ = &m_sleepyUpdates[m_sleepyUpdates.size()];	// yes, this is off the end.
+  Int child = ((i)<<1)+1;
+	UpdateModulePtr* pChild = &m_sleepyUpdates[0] + child;
+	UpdateModulePtr* pSZ = &m_sleepyUpdates[0] + m_sleepyUpdates.size();	// yes, this is off the end.
 
   while (pChild < pSZ) 
 	{
@@ -2883,13 +2884,13 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		i = child;
 		pI = pChild;
 
-		child = ((i+1)<<1)-1;
-		pChild = &m_sleepyUpdates[child];
+		child = ((i)<<1)+1;
+		pChild = &m_sleepyUpdates[0] + child;
   }
 #else
 	// our children are i*2 and i*2+1
 	Int sz = m_sleepyUpdates.size();
-  Int child = ((i+1)<<1)-1;
+  Int child = ((i)<<1)+1;
   while (child < sz) 
 	{
 		// choose the higher-priority of the two children; we must be higher-pri than that.
@@ -2912,7 +2913,7 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		a->friend_setIndexInLogic(i);
 		b->friend_setIndexInLogic(child);
 		i = child;
-		child = ((i+1)<<1)-1;
+		child = ((i)<<1)+1;
   }
 #endif
 	return i;

@@ -2511,7 +2511,6 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 				return;
 			}
 
-			try {
 			//Loop over visible terrain and extract all the tiles that need shoreline blend
 			for (; j<m_numShoreLineTiles; j++)
 			{
@@ -2600,10 +2599,6 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 					vertexCount +=4;
 					indexCount +=6;
 				}
-			}
-			IndexBufferExceptionFunc();
-			} catch(...) {
-				IndexBufferExceptionFunc();
 			}
 		}//lock and fill ib/vb
 
@@ -2702,7 +2697,6 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 				return;
 			}
 
-			try {
 			//Loop over visible terrain and extract all the tiles that need shoreline blend
 			if (m_shoreLineSortInfosXMajor)	//map is wider than taller.
 			{	
@@ -2945,10 +2939,6 @@ flushVertexBuffer0:
 flushVertexBuffer1:
 				drawStartY = y;	//record how far we've moved so far
 				isDone = y >= drawEdgeY;
-				IndexBufferExceptionFunc();
-			}
-			} catch(...) {
-				IndexBufferExceptionFunc();
 			}
 		}//lock and fill ib/vb
 
