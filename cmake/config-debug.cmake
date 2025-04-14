@@ -11,12 +11,14 @@ set(RTS_DEBUG_PROFILE "DEFAULT" CACHE STRING "Enables debug profiling. When DEFA
 set_property(CACHE RTS_DEBUG_PROFILE PROPERTY STRINGS DEFAULT ON OFF)
 
 
-add_feature_info(DebugLogging RTS_DEBUG_LOGGING "Build with Debug Logging")
-add_feature_info(DebugLogging RTS_DEBUG_CRASHING "Build with Debug Crashing")
-add_feature_info(DebugLogging RTS_DEBUG_STACKTRACE "Build with Debug Stacktracing")
-add_feature_info(DebugLogging RTS_DEBUG_PROFILE "Build with Debug Profiling")
+
+add_feature_info(DebugLogging                 RTS_DEBUG_LOGGING                      "Build with Debug Logging")
+add_feature_info(DebugCrashing                RTS_DEBUG_CRASHING                     "Build with Debug Crashing")
+add_feature_info(DebugStacktrace              RTS_DEBUG_STACKTRACE                   "Build with Debug Stacktracing")
+add_feature_info(DebugProfile                 RTS_DEBUG_PROFILE                      "Build with Debug Profiling")
 
 
+# Helper macro that handles DEFAULT ON OFF options
 macro(define_debug_option OptionName OptionEnabledCompileDef OptionDisabledCompileDef)
     if(${OptionName} STREQUAL "DEFAULT")
         # Does nothing
