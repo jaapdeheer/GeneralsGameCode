@@ -50,9 +50,9 @@
 
 // TheSuperHackers @feature helmutbuhler 04/10/2025
 // Uncomment this to show normal logging stuff in the crc logging.
-// This can be helpful for context, but can also clutter diffs because normal logs arn't necessarily
+// This can be helpful for context, but can also clutter diffs because normal logs aren't necessarily
 // deterministic or the same on all peers in multiplayer games.
-//#define NORMAL_LOG_IN_CRC_LOG
+//#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
 
 #define DEBUG_THREADSAFE
 #ifdef DEBUG_THREADSAFE
@@ -134,7 +134,9 @@ static const char *prepBuffer(const char* format, char *buffer);
 #ifdef DEBUG_LOGGING
 static void doLogOutput(const char *buffer);
 #endif
+#ifdef DEBUG_CRASHING
 static int doCrashBox(const char *buffer, Bool logResult);
+#endif
 static void whackFunnyCharacters(char *buf);
 #ifdef DEBUG_STACKTRACE
 static void doStackDump();
@@ -147,7 +149,7 @@ static void doStackDump();
 // ----------------------------------------------------------------------------
 inline Bool ignoringAsserts()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	return !DX8Wrapper_IsWindowed || (TheGlobalData&&TheGlobalData->m_debugIgnoreAsserts);
 #else
 	return !DX8Wrapper_IsWindowed;
@@ -244,7 +246,7 @@ static void doLogOutput(const char *buffer)
 		::OutputDebugString(buffer);
 	}
 
-#ifdef NORMAL_LOG_IN_CRC_LOG
+#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
 	addCRCDebugLineNoCounter("%s", buffer);
 #endif
 }
@@ -257,6 +259,7 @@ static void doLogOutput(const char *buffer)
 	we exit the app, break into debugger, or continue execution. 
 */
 // ----------------------------------------------------------------------------
+#ifdef DEBUG_CRASHING
 static int doCrashBox(const char *buffer, Bool logResult)
 {
 	int result;
@@ -294,6 +297,7 @@ static int doCrashBox(const char *buffer, Bool logResult)
 	}
 	return result;
 }
+#endif
 
 #ifdef DEBUG_STACKTRACE
 // ----------------------------------------------------------------------------
@@ -639,7 +643,7 @@ double SimpleProfiler::getAverageTime()
 	return (double)m_totalAllSessions * 1000.0 / ((double)m_freq * (double)m_numSessions);
 }
 
-#endif	// ALLOW_DEBUG_UTILS
+#endif	// DEBUG_PROFILE
 
 // ----------------------------------------------------------------------------
 // ReleaseCrash
