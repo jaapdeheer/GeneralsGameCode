@@ -635,7 +635,6 @@ void GameClient::update( void )
 	}
 
 	// update the window system itself
-	if (TheWindowManager)
 	{
 		TheWindowManager->UPDATE();
 	}
