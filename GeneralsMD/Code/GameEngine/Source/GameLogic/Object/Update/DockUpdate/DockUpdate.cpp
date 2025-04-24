@@ -511,7 +511,7 @@ void DockUpdate::loadDockPositions()
 			{
 				// Dynamic means no bones
 				
-				// TheSuperHackers @logic-client-separation helmutbuhler 04/11/2025
+				// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
 				// We shouldn't depend on bones of a drawable here!
 
 				Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE];
