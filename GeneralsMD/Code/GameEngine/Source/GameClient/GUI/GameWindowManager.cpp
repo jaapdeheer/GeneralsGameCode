@@ -4124,7 +4124,7 @@ GameWindow *DummyGameWindowManager::winCreateFromScript(AsciiString filenameStri
 	return dummyWindow;
 }
 
-DummyGameWindow::~DummyGameWindow()
+GameWindowDummy::~GameWindowDummy()
 {
 }
 
