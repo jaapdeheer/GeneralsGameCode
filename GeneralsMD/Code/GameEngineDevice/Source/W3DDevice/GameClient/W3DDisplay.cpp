@@ -698,7 +698,7 @@ void W3DDisplay::init( void )
 
 		// create our 3D scene
 		m_3DScene =NEW_REF( RTS3DScene, () );
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if( TheGlobalData->m_wireframe )
 			m_3DScene->Set_Polygon_Mode( SceneClass::LINE );
 	#endif
