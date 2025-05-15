@@ -4099,7 +4099,7 @@ void GameWindowManager::clearTabList( void )
 }
 
 
-GameWindow *DummyGameWindowManager::winGetWindowFromId(GameWindow *window, Int id)
+GameWindow *GameWindowManagerDummy::winGetWindowFromId(GameWindow *window, Int id)
 {
 	window = GameWindowManager::winGetWindowFromId(window, id);
 	if (window != NULL)
@@ -4114,7 +4114,7 @@ WindowMsgHandledType DummyWindowSystem(GameWindow *window, UnsignedInt msg, Wind
 	return MSG_IGNORED;
 }
 
-GameWindow *DummyGameWindowManager::winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info)
+GameWindow *GameWindowManagerDummy::winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info)
 {
 	WindowLayoutInfo scriptInfo;
 	GameWindow* dummyWindow = winCreate(NULL, 0, 0, 0, 100, 100, DummyWindowSystem, NULL);

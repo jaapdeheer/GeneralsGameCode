@@ -346,7 +346,7 @@ void GameClient::init( void )
 	}
 
 	// create the window manager
-	TheWindowManager = TheGlobalData->m_headless ? NEW DummyGameWindowManager : createWindowManager();
+	TheWindowManager = TheGlobalData->m_headless ? NEW GameWindowManagerDummy : createWindowManager();
 	if( TheWindowManager )
 	{
 

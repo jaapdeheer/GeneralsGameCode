@@ -392,7 +392,7 @@ public:
 
 // TheSuperHackers @feature helmutbuhler 24/04/2025
 // GameWindowManager that does nothing. Used for Headless Mode.
-class DummyGameWindowManager : public GameWindowManager
+class GameWindowManagerDummy : public GameWindowManager
 {
 public:
 	virtual GameWindow *winGetWindowFromId(GameWindow *window, Int id);
